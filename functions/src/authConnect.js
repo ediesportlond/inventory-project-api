@@ -1,8 +1,8 @@
 import { initializeApp, getApps, cert } from "firebase-admin/app"
 import { getAuth } from "firebase-admin/auth"
-import { serviceAccount } from "./serviceAccount.js"
+import serviceAccount from "./serviceAccount.js"
 
-export function authConnect() {
+export default function authConnect() {
   if(!getApps().length) {
     initializeApp({
       credential: cert(serviceAccount)
