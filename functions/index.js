@@ -16,3 +16,4 @@ app.get('/inventory/:select', getSelectedItems)
 app.post('/inventory/new', addNewItem)
 
 export const api = functions.https.onRequest(app)
+// app.listen(5002, () => console.log('listening on http://localhost:5002'))

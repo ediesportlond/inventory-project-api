@@ -6,41 +6,45 @@ import authConnect from './authConnect.js'
 const client = dbConnect()
 const collection = client.db('homeGoods').collection('inventory')
 
-export const verifyToken = (req, res) => {
+export const getAllItems = async (req, res) => {
   const token = req.headers.authorization;
   const auth = authConnect();
-  auth.verifyIdToken(token)
-    .then(decodedToken => {
-      return decodedToken
-    })
+
+  const decodedToken = await auth.verifyIdToken(token)
     .catch(err => {
       res.status(401).send(err);
-      return
     });
-}
 
-export const getAllItems = (req, res) => {
-  const decodedToken = verifyToken(req, res)
   if (!decodedToken) return;
+
   const { uid } = decodedToken
 
-  const query = { uid: new ObjectId(uid) }
+  const query = { uid: uid }
 
   collection.find(query).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
-    .catch(err => res.status(500).send({ success: false, message: err }))
+    .catch(err => {
+      res.status(500).send({ success: false, message: err })
+    })
 
-  client.close()
 }
 
-export const getSelectedItems = (req, res) => {
-  const decodedToken = verifyToken(req, res)
+export const getSelectedItems = async (req, res) => {
+  const token = req.headers.authorization;
+  const auth = authConnect();
+
+  const decodedToken = await auth.verifyIdToken(token)
+    .catch(err => {
+      res.status(401).send(err);
+    });
+
   if (!decodedToken) return;
+
   const { uid } = decodedToken
 
   const { select } = sanitize(req.params)
 
-  const query = { uid: new ObjectId(uid) }
+  const query = { uid: uid }
 
   switch (select) {
     case 'instock':
@@ -60,12 +64,19 @@ export const getSelectedItems = (req, res) => {
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => res.status(500).send({ success: false, message: err }))
 
-  client.close()
 }
 
-export const addNewItem = (req, res) => {
-  const decodedToken = verifyToken(req, res)
+export const addNewItem = async (req, res) => {
+  const token = req.headers.authorization;
+  const auth = authConnect();
+
+  const decodedToken = await auth.verifyIdToken(token)
+    .catch(err => {
+      res.status(401).send(err);
+    });
+
   if (!decodedToken) return;
+
   const { uid } = decodedToken
 
   const newItem = sanitize(req.body)
@@ -77,5 +88,4 @@ export const addNewItem = (req, res) => {
     .then(result => res.status(201).send({ success: true, message: result }))
     .catch(err => res.status(500).send({ success: false, message: err }))
 
-  client.close()
 }
