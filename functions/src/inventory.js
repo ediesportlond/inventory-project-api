@@ -11,18 +11,18 @@ export const verifyToken = (req, res) => {
   const auth = authConnect();
   auth.verifyIdToken(token)
     .then(decodedToken => {
-      if (!decodedToken) return { uid: undefined };
       return decodedToken
     })
     .catch(err => {
       res.status(401).send(err);
+      return
     });
 }
 
-export const getAllItems = () => {
-  const { uid } = verifyToken(req, res)
-
-  if (!uid) return;
+export const getAllItems = (req, res) => {
+  const decodedToken = verifyToken(req, res)
+  if (!decodedToken) return;
+  const { uid } = decodedToken
 
   const query = { uid: new ObjectId(uid) }
 
@@ -33,10 +33,10 @@ export const getAllItems = () => {
   client.close()
 }
 
-export const getSelectedItems = () => {
-  const { uid } = verifyToken(req, res)
-
-  if (!uid) return;
+export const getSelectedItems = (req, res) => {
+  const decodedToken = verifyToken(req, res)
+  if (!decodedToken) return;
+  const { uid } = decodedToken
 
   const { select } = sanitize(req.params)
 
@@ -63,10 +63,10 @@ export const getSelectedItems = () => {
   client.close()
 }
 
-export const addNewItem = () => {
-  const { uid } = verifyToken(req, res)
-
-  if (!uid) return;
+export const addNewItem = (req, res) => {
+  const decodedToken = verifyToken(req, res)
+  if (!decodedToken) return;
+  const { uid } = decodedToken
 
   const newItem = sanitize(req.body)
 
