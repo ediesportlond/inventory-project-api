@@ -6,11 +6,13 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-import {verifyToken} from './src/inventory.js'
+import { getAllItems, getSelectedItems, addNewItem } from './src/inventory.js'
 
 app.get('/', (req, res) => {
   res.send('Hello, World!')
 })
-app.get('/token', verifyToken)
+app.get('/inventory', getAllItems)
+app.get('/inventory/:select', getSelectedItems)
+app.post('/inventory/new', addNewItem)
 
 export const api = functions.https.onRequest(app)
