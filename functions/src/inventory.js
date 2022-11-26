@@ -85,7 +85,6 @@ export const addNewItem = async (req, res) => {
   newItem.createdDate = new Date()
 
   collection.insertOne(newItem)
-    .then(result => res.status(201).send({ success: true, message: result }))
+    .then(()=> getAllItems(req,res))
     .catch(err => res.status(500).send({ success: false, message: err }))
-
 }
