@@ -88,3 +88,26 @@ export const addNewItem = async (req, res) => {
     .then(()=> getAllItems(req,res))
     .catch(err => res.status(500).send({ success: false, message: err }))
 }
+
+export const getOneItem = async (req, res) => {
+  const token = req.headers.authorization;
+  const auth = authConnect();
+
+  const decodedToken = await auth.verifyIdToken(token)
+    .catch(err => {
+      res.status(401).send(err);
+    });
+
+  if (!decodedToken) return;
+
+  const { oid } = req.params;
+
+  const query = { _id: new ObjectId(oid) };
+
+  collection.findOne(query)
+    .then(result => res.status(200).send({ success: true, message: result }))
+    .catch(err => {
+      res.status(500).send({ success: false, message: err })
+    })
+
+}
