@@ -184,6 +184,7 @@ const getConsumables = async (uid) => {
   const consumablesRunningLow = {
     uid: uid,
     type: 'consumable',
+    restock: true,
     $and: [
       { $expr: { $lte: ["$percentRemaining", "$threshold"] } },    //compares percent remaining threshold
       { inventory: { $lte: 1 } }
@@ -199,6 +200,7 @@ const getConsumables = async (uid) => {
 const getStockables = async (uid) => {
   const stockablesLow = {
     uid: uid,
+    restock: true,
     type: 'stockable',
     $expr: { $lte: ["$inventory", "$threshold"] }
   };
