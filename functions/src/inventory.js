@@ -162,7 +162,6 @@ const getToday = () => {
 const getPerishables = async (uid) => {
   const expiredPerishables = {
     uid: uid,
-    // userId: 'dWCXfDp7F6gryJ1GCpGO2eMv4IF3',
     type: 'perishable',
     restock: true,
     $or: [
@@ -176,16 +175,41 @@ const getPerishables = async (uid) => {
   };
 
   const result = await collection.find(expiredPerishables).toArray()
-  .catch(err => res.status(500).send({ success: false, message: err }));
+    .catch(err => res.status(500).send({ success: false, message: err }));
 
   return result;
 }
 
-//getConsumables
+const getConsumables = async (uid) => {
+  const consumablesRunningLow = {
+    uid: uid,
+    type: 'consumable',
+    $and: [
+      { $expr: { $lte: ["$percentRemaining", "$threshold"] } },    //compares percent remaining threshold
+      { inventory: { $lte: 1 } }
+    ]
+  };
 
-//getStockables
+  const result = await collection.find(consumablesRunningLow).toArray()
+    .catch(err => res.status(500).send({ success: false, message: err }));
 
-//finish below function
+  return result
+}
+
+const getStockables = async (uid) => {
+  const stockablesLow = {
+    uid: uid,
+    type: 'stockable',
+    $expr: { $lte: ["$inventory", "$threshold"] }
+  };
+
+  const result = await collection.find(stockablesLow).toArray()
+    .catch(err => res.status(500).send({ success: false, message: err }));
+
+  return result
+
+}
+
 export const getShoppingList = async (req, res) => {
   const token = req.headers.authorization;
   const auth = authConnect();
@@ -198,4 +222,19 @@ export const getShoppingList = async (req, res) => {
   if (!decodedToken) return;
 
   const { uid } = decodedToken;
+
+  const perishables = await getPerishables(uid);
+  const consumables = await getConsumables(uid);
+  const stockables = await getStockables(uid);
+
+  const list = [...perishables, ...consumables, ...stockables];
+  
+  let cost = 0;
+  list.forEach(item => cost += Number(item.price));
+  cost = cost.toFixed(2);
+  list.unshift({
+    "cost": cost
+  });
+
+  res.status(200).send({ success: true, message: list });
 }
