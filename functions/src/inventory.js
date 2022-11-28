@@ -233,7 +233,7 @@ export const getShoppingList = async (req, res) => {
   list.forEach(item => cost += Number(item.price));
   cost = cost.toFixed(2);
   list.unshift({
-    "cost": cost
+    cost: cost
   });
 
   res.status(200).send({ success: true, message: list });
