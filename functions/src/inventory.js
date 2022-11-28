@@ -66,29 +66,6 @@ export const getSelectedItems = async (req, res) => {
 
 }
 
-export const addNewItem = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
-
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
-
-  const { uid } = decodedToken
-
-  const newItem = sanitize(req.body)
-
-  newItem.uid = uid
-  newItem.createdDate = new Date()
-
-  collection.insertOne(newItem)
-    .then(() => getAllItems(req, res))
-    .catch(err => res.status(500).send({ success: false, message: err }))
-}
-
 export const getOneItem = async (req, res) => {
   const token = req.headers.authorization;
   const auth = authConnect();
@@ -110,6 +87,29 @@ export const getOneItem = async (req, res) => {
       res.status(500).send({ success: false, message: err })
     })
 
+}
+
+export const addNewItem = async (req, res) => {
+  const token = req.headers.authorization;
+  const auth = authConnect();
+
+  const decodedToken = await auth.verifyIdToken(token)
+    .catch(err => {
+      res.status(401).send(err);
+    });
+
+  if (!decodedToken) return;
+
+  const { uid } = decodedToken
+
+  const newItem = sanitize(req.body)
+
+  newItem.uid = uid
+  newItem.createdDate = new Date()
+
+  collection.insertOne(newItem)
+    .then(() => getAllItems(req, res))
+    .catch(err => res.status(500).send({ success: false, message: err }))
 }
 
 export const updateItem = async (req, res) => {
@@ -137,4 +137,45 @@ export const updateItem = async (req, res) => {
   collection.findOneAndUpdate(query, update)
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => res.status(500).send({ success: false, message: err }));
+}
+
+const getPerishables = async (uid) => {
+  const expiredPerishables = {
+    userId: uid,
+    // userId: 'dWCXfDp7F6gryJ1GCpGO2eMv4IF3',
+    type: 'perishable',
+    restock: true,
+    $or: [
+      {
+        threshold: { $lte: new Date() }
+      },
+      {
+        inventory: { $lte: 1 }
+      }
+    ]
+  };
+
+  const result = await collection.find(expiredPerishables).toArray()
+  .catch(err => res.status(500).send({ success: false, message: err }));
+
+  return result;
+}
+
+//getConsumables
+
+//getStockables
+
+//finish below function
+export const getShoppingList = async (req, res) => {
+  const token = req.headers.authorization;
+  const auth = authConnect();
+
+  const decodedToken = await auth.verifyIdToken(token)
+    .catch(err => {
+      res.status(401).send(err);
+    });
+
+  if (!decodedToken) return;
+
+  const { uid } = decodedToken;
 }

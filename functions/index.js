@@ -6,13 +6,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-import { getAllItems, getSelectedItems, addNewItem, getOneItem, 
-  updateItem } from './src/inventory.js';
+import {
+  getAllItems, getSelectedItems, addNewItem, getOneItem,
+  updateItem, getShoppingList
+} from './src/inventory.js';
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!')
-})
 app.get('/inventory', getAllItems);
+app.get('/shopping-list', getShoppingList);
 app.get('/inventory/:select', getSelectedItems);
 app.get('/inventory/single/:oid', getOneItem);
 app.post('/inventory/new', addNewItem);
