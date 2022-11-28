@@ -139,15 +139,35 @@ export const updateItem = async (req, res) => {
     .catch(err => res.status(500).send({ success: false, message: err }));
 }
 
+const getToday = () => {
+  let d = new Date();
+  d = d.toDateString();
+  d = d.replace(/^\w{3}\s/, '');
+
+  const months = {
+    Jan: '01', Feb: '02', Mar: '03', Apr: '04',
+    May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10',
+    Nov: '11', Dec: '12'
+  }
+
+  const month = months[d.match(/^\w{3}/)];
+  const nums = d.match(/\d+/g);
+  let _day = nums[0];
+  let year = nums[1];
+  if (_day.length < 2) _day = '0' + _day;
+
+  return `${year}-${month}-${_day}`
+}
+
 const getPerishables = async (uid) => {
   const expiredPerishables = {
-    userId: uid,
+    uid: uid,
     // userId: 'dWCXfDp7F6gryJ1GCpGO2eMv4IF3',
     type: 'perishable',
     restock: true,
     $or: [
       {
-        threshold: { $lte: new Date() }
+        threshold: { $lte: getToday() }
       },
       {
         inventory: { $lte: 1 }
