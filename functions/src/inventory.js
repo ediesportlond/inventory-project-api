@@ -7,17 +7,8 @@ const client = dbConnect()
 const collection = client.db('homeGoods').collection('inventory')
 
 export const getAllItems = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
 
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
-
-  const { uid } = decodedToken
+  const {uid} = req.decoded;
 
   const query = { uid: uid }
 
@@ -30,17 +21,8 @@ export const getAllItems = async (req, res) => {
 }
 
 export const getSelectedItems = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
 
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
-
-  const { uid } = decodedToken
+  const {uid} = req.decoded;
 
   const { select } = sanitize(req.params)
 
@@ -67,15 +49,6 @@ export const getSelectedItems = async (req, res) => {
 }
 
 export const getOneItem = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
-
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
 
   const { oid } = sanitize(req.params);
 
@@ -90,17 +63,8 @@ export const getOneItem = async (req, res) => {
 }
 
 export const addNewItem = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
 
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
-
-  const { uid } = decodedToken
+  const {uid} = req.decoded;
 
   const newItem = sanitize(req.body)
 
@@ -113,15 +77,6 @@ export const addNewItem = async (req, res) => {
 }
 
 export const updateItem = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
-
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
 
   const { oid } = sanitize(req.params);
 
@@ -213,17 +168,8 @@ const getStockables = async (uid) => {
 }
 
 export const getShoppingList = async (req, res) => {
-  const token = req.headers.authorization;
-  const auth = authConnect();
 
-  const decodedToken = await auth.verifyIdToken(token)
-    .catch(err => {
-      res.status(401).send(err);
-    });
-
-  if (!decodedToken) return;
-
-  const { uid } = decodedToken;
+  const {uid} = req.decoded;
 
   const perishables = await getPerishables(uid);
   const consumables = await getConsumables(uid);
