@@ -77,7 +77,7 @@ export const getOneItem = async (req, res) => {
 
   if (!decodedToken) return;
 
-  const { oid } = req.params;
+  const { oid } = sanitize(req.params);
 
   const query = { _id: new ObjectId(oid) };
 
@@ -123,7 +123,7 @@ export const updateItem = async (req, res) => {
 
   if (!decodedToken) return;
 
-  const { oid } = req.params;
+  const { oid } = sanitize(req.params);
 
   const query = { _id: new ObjectId(oid) };
 
