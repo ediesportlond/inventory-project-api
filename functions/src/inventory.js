@@ -212,3 +212,16 @@ export const searchInventory = (req, res) => {
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => res.status(500).send({ success: false, message: err }))
 }
+
+export const deleteItem = (req, res) => {
+  const { oid } = sanitize(req.params);
+  const { uid } = req.decoded;
+  const query = {
+    uid: uid,
+    _id: new ObjectId(oid)
+  }
+
+  collection.deleteOne(query)
+    .then((result) => res.status(200).send({ success: true, message: result }))
+    .catch((err) => res.status(500).send({ success: false, message: err }))
+}
