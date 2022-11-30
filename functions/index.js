@@ -10,9 +10,10 @@ import { verifyGoogleToken } from './src/middleware.js';
 
 import {
   getAllItems, getSelectedItems, addNewItem, getOneItem,
-  updateItem, getShoppingList
+  updateItem, getShoppingList, searchInventory
 } from './src/inventory.js';
 
+app.get('/search/:search', verifyGoogleToken, searchInventory)
 app.get('/inventory', verifyGoogleToken, getAllItems);
 app.get('/shopping-list', verifyGoogleToken, getShoppingList);
 app.get('/inventory/:select', verifyGoogleToken, getSelectedItems);

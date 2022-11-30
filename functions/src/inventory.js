@@ -6,9 +6,9 @@ import authConnect from './authConnect.js'
 const client = dbConnect()
 const collection = client.db('homeGoods').collection('inventory')
 
-export const getAllItems = async (req, res) => {
+export const getAllItems = (req, res) => {
 
-  const {uid} = req.decoded;
+  const { uid } = req.decoded;
 
   const query = { uid: uid }
 
@@ -20,9 +20,9 @@ export const getAllItems = async (req, res) => {
 
 }
 
-export const getSelectedItems = async (req, res) => {
+export const getSelectedItems = (req, res) => {
 
-  const {uid} = req.decoded;
+  const { uid } = req.decoded;
 
   const { select } = sanitize(req.params)
 
@@ -48,7 +48,7 @@ export const getSelectedItems = async (req, res) => {
 
 }
 
-export const getOneItem = async (req, res) => {
+export const getOneItem = (req, res) => {
 
   const { oid } = sanitize(req.params);
 
@@ -62,9 +62,9 @@ export const getOneItem = async (req, res) => {
 
 }
 
-export const addNewItem = async (req, res) => {
+export const addNewItem = (req, res) => {
 
-  const {uid} = req.decoded;
+  const { uid } = req.decoded;
 
   const newItem = sanitize(req.body)
 
@@ -76,7 +76,7 @@ export const addNewItem = async (req, res) => {
     .catch(err => res.status(500).send({ success: false, message: err }))
 }
 
-export const updateItem = async (req, res) => {
+export const updateItem = (req, res) => {
 
   const { oid } = sanitize(req.params);
 
@@ -169,14 +169,14 @@ const getStockables = async (uid) => {
 
 export const getShoppingList = async (req, res) => {
 
-  const {uid} = req.decoded;
+  const { uid } = req.decoded;
 
   const perishables = await getPerishables(uid);
   const consumables = await getConsumables(uid);
   const stockables = await getStockables(uid);
 
   const list = [...perishables, ...consumables, ...stockables];
-  
+
   let cost = 0;
   list.forEach(item => cost += Number(item.price));
   cost = cost.toFixed(2);
@@ -185,4 +185,30 @@ export const getShoppingList = async (req, res) => {
   });
 
   res.status(200).send({ success: true, message: list });
+}
+
+export const searchInventory = (req, res) => {
+  const { search } = sanitize(req.params);
+  const regex = new RegExp(search, 'i');
+
+  const { uid } = req.decoded;
+
+  const searchFor = {
+    uid: uid,
+    $or: [
+      {
+        group: { $regex: regex }
+      },
+      {
+        productName: { $regex: regex }
+      },
+      {
+        brand: { $regex: regex }
+      }
+    ]
+  }
+
+  collection.find(searchFor).toArray()
+    .then(result => res.status(200).send({ success: true, message: result }))
+    .catch(err => res.status(500).send({ success: false, message: err }))
 }
