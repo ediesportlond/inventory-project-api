@@ -16,7 +16,7 @@ import {
 app.get('/search/:search', verifyGoogleToken, searchInventory)
 app.get('/inventory', verifyGoogleToken, getAllItems);
 app.get('/shopping-list', verifyGoogleToken, getShoppingList);
-app.get('/inventory/:select', verifyGoogleToken, getSelectedItems);
+app.get('/inventory/select/:select', verifyGoogleToken, getSelectedItems);
 app.get('/inventory/single/:oid', verifyGoogleToken, getOneItem);
 app.post('/inventory/new', verifyGoogleToken, addNewItem);
 app.post('/inventory/update/:oid', verifyGoogleToken, updateItem);

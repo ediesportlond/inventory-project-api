@@ -38,7 +38,7 @@ export const getSelectedItems = (req, res) => {
       query.inventory = 0
   }
 
-  options = {
+  const options = {
     sort: { inventory: 1 }
   }
 
