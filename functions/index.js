@@ -19,7 +19,7 @@ app.get('/shopping-list', verifyGoogleToken, getShoppingList);
 app.get('/inventory/select/:select', verifyGoogleToken, getSelectedItems);
 app.get('/inventory/single/:oid', verifyGoogleToken, getOneItem);
 app.post('/inventory/new', verifyGoogleToken, addNewItem);
-app.post('/inventory/update/:oid', verifyGoogleToken, updateItem);
+app.patch('/inventory/update/:oid', verifyGoogleToken, updateItem);
 app.delete('/delete/:oid', verifyGoogleToken, deleteItem);
 
 export const api = functions.https.onRequest(app);
