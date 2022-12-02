@@ -11,7 +11,7 @@ import { verifyGoogleToken } from './src/middleware.js';
 import {
   getAllItems, getSelectedItems, addNewItem, getOneItem,
   updateItem, getShoppingList, searchInventory, deleteItem, 
-  getAllLists, addNewList, getSingleHistory
+  getAllLists, addNewList, getSingleHistory, guestSingleHistory
 } from './src/inventory.js';
 
 app.get('/search/:search', verifyGoogleToken, searchInventory)
@@ -25,6 +25,9 @@ app.post('/inventory/new', verifyGoogleToken, addNewItem);
 app.post('/history/list', verifyGoogleToken, addNewList);
 app.patch('/inventory/update/:oid', verifyGoogleToken, updateItem);
 app.delete('/delete/:oid', verifyGoogleToken, deleteItem);
+
+//Unprotected route
+app.get('/guest/:oid', guestSingleHistory);
 
 export const api = functions.https.onRequest(app);
 // app.listen(5002, () => console.log('listening on http://localhost:5002'))

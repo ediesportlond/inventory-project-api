@@ -271,3 +271,16 @@ export const getSingleHistory = (req, res) => {
     })
 
 }
+
+export const guestSingleHistory = (req, res) => {
+  const { oid } = sanitize(req.params);
+  const query = { _id: new ObjectId(oid) };
+
+  const collection = client.db('homeGoods').collection('shoppingLists');
+
+  collection.findOne(query)
+  .then(result => res.status(200).send({ success: true, message: result }))
+  .catch(err => {
+    res.status(500).send({ success: false, message: err })
+  })
+}
