@@ -1,10 +1,9 @@
-import { ObjectId } from 'mongodb'
-import sanitize from 'mongo-sanitize'
-import dbConnect from './dbConnect.js'
-import authConnect from './authConnect.js'
+import { ObjectId } from 'mongodb';
+import sanitize from 'mongo-sanitize';
+import dbConnect from './dbConnect.js';
 
-const client = dbConnect()
-const collection = client.db('homeGoods').collection('inventory')
+const client = dbConnect();
+const collection = client.db('homeGoods').collection('inventory');
 
 export const getAllItems = (req, res) => {
 
@@ -66,10 +65,10 @@ export const addNewItem = (req, res) => {
 
   const { uid } = req.decoded;
 
-  const newItem = sanitize(req.body)
+  const newItem = sanitize(req.body);
 
-  newItem.uid = uid
-  newItem.createdDate = new Date()
+  newItem.uid = uid;
+  newItem.createdDate = new Date();
 
   collection.insertOne(newItem)
     .then(() => getAllItems(req, res))
@@ -178,7 +177,9 @@ export const getShoppingList = async (req, res) => {
   const list = [...perishables, ...consumables, ...stockables];
 
   let cost = 0;
+
   list.forEach(item => cost += Number(item.price));
+
   cost = cost.toFixed(2);
   list.unshift({
     cost: cost
@@ -224,4 +225,33 @@ export const deleteItem = (req, res) => {
   collection.deleteOne(query)
     .then((result) => res.status(200).send({ success: true, message: result }))
     .catch((err) => res.status(500).send({ success: false, message: err }))
+}
+
+export const getAllLists = (req, res) => {
+  const { uid } = req.decoded;
+
+  const query = { uid: uid }
+
+  const collection = client.db('homeGoods').collection('shoppingLists');
+  
+  collection.find(query).toArray()
+    .then(result => res.status(200).send({ success: true, message: result }))
+    .catch(err => {
+      res.status(500).send({ success: false, message: err })
+    })
+}
+
+export const addNewList = (req, res) => {
+  const { uid } = req.decoded;
+  
+  const newList = sanitize(req.body);
+
+  newList.uid = uid;
+  newList.createdDate = new Date();
+
+  const collection = client.db('homeGoods').collection('shoppingLists');
+
+  collection.insertOne(newList)
+  .then(() => getAllLists(req, res))
+  .catch(err => res.status(500).send({ success: false, message: err }))
 }
