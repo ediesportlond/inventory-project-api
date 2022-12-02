@@ -233,7 +233,7 @@ export const getAllLists = (req, res) => {
   const query = { uid: uid }
 
   const collection = client.db('homeGoods').collection('shoppingLists');
-  
+
   collection.find(query).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
@@ -243,7 +243,7 @@ export const getAllLists = (req, res) => {
 
 export const addNewList = (req, res) => {
   const { uid } = req.decoded;
-  
+
   const newList = sanitize(req.body);
 
   newList.uid = uid;
@@ -252,6 +252,22 @@ export const addNewList = (req, res) => {
   const collection = client.db('homeGoods').collection('shoppingLists');
 
   collection.insertOne(newList)
-  .then(() => getAllLists(req, res))
-  .catch(err => res.status(500).send({ success: false, message: err }))
+    .then(() => getAllLists(req, res))
+    .catch(err => res.status(500).send({ success: false, message: err }))
+}
+
+export const getSingleHistory = (req, res) => {
+
+  const { oid } = sanitize(req.params);
+
+  const query = { _id: new ObjectId(oid) };
+
+  const collection = client.db('homeGoods').collection('shoppingLists');
+
+  collection.findOne(query)
+    .then(result => res.status(200).send({ success: true, message: result }))
+    .catch(err => {
+      res.status(500).send({ success: false, message: err })
+    })
+
 }
