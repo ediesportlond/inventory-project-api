@@ -139,10 +139,15 @@ const getConsumables = async (uid) => {
     uid: uid,
     type: 'consumable',
     restock: true,
-    $and: [
-      { $expr: { $lte: ["$percentRemaining", "$threshold"] } },    //compares percent remaining threshold
-      { inventory: { $lte: 1 } }
-    ]
+    $or: [{
+      inventory: 0,
+    },
+    {
+      $and: [
+        { $expr: { $lte: ["$percentRemaining", "$threshold"] } },    //compares percent remaining threshold
+        { inventory: { $lte: 1 } }
+      ]
+    }],
   };
 
   const result = await collection.find(consumablesRunningLow).toArray()
@@ -279,8 +284,8 @@ export const guestSingleHistory = (req, res) => {
   const collection = client.db('homeGoods').collection('shoppingLists');
 
   collection.findOne(query)
-  .then(result => res.status(200).send({ success: true, message: result }))
-  .catch(err => {
-    res.status(500).send({ success: false, message: err })
-  })
+    .then(result => res.status(200).send({ success: true, message: result }))
+    .catch(err => {
+      res.status(500).send({ success: false, message: err })
+    })
 }
