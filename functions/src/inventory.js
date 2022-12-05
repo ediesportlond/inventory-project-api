@@ -11,7 +11,7 @@ export const getAllItems = (req, res) => {
 
   const query = { uid: uid }
 
-  collection.find(query).toArray()
+  collection.find(query).sort({createdDate: -1}).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
       res.status(500).send({ success: false, message: err })
@@ -235,11 +235,11 @@ export const deleteItem = (req, res) => {
 export const getAllLists = (req, res) => {
   const { uid } = req.decoded;
 
-  const query = { uid: uid }
+  const query = { uid: uid };
 
   const collection = client.db('homeGoods').collection('shoppingLists');
 
-  collection.find(query).toArray()
+  collection.find(query).sort({createdDate: -1}).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
       res.status(500).send({ success: false, message: err })
