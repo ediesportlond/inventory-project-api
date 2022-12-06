@@ -9,12 +9,12 @@ export const getAllItems = (req, res) => {
 
   const { uid } = req.decoded;
 
-  const query = { uid: uid }
+  const query = { uid: uid };
 
   collection.find(query).sort({createdDate: -1}).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
-      res.status(500).send({ success: false, message: err })
+      res.status(500).send({ success: false, message: err });
     })
 
 }
@@ -23,9 +23,9 @@ export const getSelectedItems = (req, res) => {
 
   const { uid } = req.decoded;
 
-  const { select } = sanitize(req.params)
+  const { select } = sanitize(req.params);
 
-  const query = { uid: uid }
+  const query = { uid: uid };
 
   switch (select) {
     case 'instock':
@@ -43,7 +43,7 @@ export const getSelectedItems = (req, res) => {
 
   collection.find(query, options).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
-    .catch(err => res.status(500).send({ success: false, message: err }))
+    .catch(err => res.status(500).send({ success: false, message: err }));
 
 }
 
@@ -56,7 +56,7 @@ export const getOneItem = (req, res) => {
   collection.findOne(query)
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
-      res.status(500).send({ success: false, message: err })
+      res.status(500).send({ success: false, message: err });
     })
 
 }
@@ -72,7 +72,7 @@ export const addNewItem = (req, res) => {
 
   collection.insertOne(newItem)
     .then(() => getAllItems(req, res))
-    .catch(err => res.status(500).send({ success: false, message: err }))
+    .catch(err => res.status(500).send({ success: false, message: err }));
 }
 
 export const updateItem = (req, res) => {
@@ -110,7 +110,7 @@ const getToday = () => {
   let year = nums[1];
   if (_day.length < 2) _day = '0' + _day;
 
-  return `${year}-${month}-${_day}`
+  return `${year}-${month}-${_day}`;
 }
 
 const getPerishables = async (uid) => {
@@ -153,7 +153,7 @@ const getConsumables = async (uid) => {
   const result = await collection.find(consumablesRunningLow).toArray()
     .catch(err => res.status(500).send({ success: false, message: err }));
 
-  return result
+  return result;
 }
 
 const getStockables = async (uid) => {
@@ -167,7 +167,7 @@ const getStockables = async (uid) => {
   const result = await collection.find(stockablesLow).toArray()
     .catch(err => res.status(500).send({ success: false, message: err }));
 
-  return result
+  return result;
 
 }
 
@@ -216,7 +216,7 @@ export const searchInventory = (req, res) => {
 
   collection.find(searchFor).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
-    .catch(err => res.status(500).send({ success: false, message: err }))
+    .catch(err => res.status(500).send({ success: false, message: err }));
 }
 
 export const deleteItem = (req, res) => {
@@ -229,7 +229,7 @@ export const deleteItem = (req, res) => {
 
   collection.deleteOne(query)
     .then((result) => res.status(200).send({ success: true, message: result }))
-    .catch((err) => res.status(500).send({ success: false, message: err }))
+    .catch((err) => res.status(500).send({ success: false, message: err }));
 }
 
 export const getAllLists = (req, res) => {
@@ -242,7 +242,7 @@ export const getAllLists = (req, res) => {
   collection.find(query).sort({createdDate: -1}).toArray()
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
-      res.status(500).send({ success: false, message: err })
+      res.status(500).send({ success: false, message: err });
     })
 }
 
@@ -258,7 +258,7 @@ export const addNewList = (req, res) => {
 
   collection.insertOne(newList)
     .then(() => getAllLists(req, res))
-    .catch(err => res.status(500).send({ success: false, message: err }))
+    .catch(err => res.status(500).send({ success: false, message: err }));
 }
 
 export const getSingleHistory = (req, res) => {
@@ -272,7 +272,7 @@ export const getSingleHistory = (req, res) => {
   collection.findOne(query)
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
-      res.status(500).send({ success: false, message: err })
+      res.status(500).send({ success: false, message: err });
     })
 
 }
@@ -286,6 +286,6 @@ export const guestSingleHistory = (req, res) => {
   collection.findOne(query)
     .then(result => res.status(200).send({ success: true, message: result }))
     .catch(err => {
-      res.status(500).send({ success: false, message: err })
+      res.status(500).send({ success: false, message: err });
     })
 }

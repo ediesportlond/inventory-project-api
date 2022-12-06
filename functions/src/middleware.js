@@ -1,4 +1,4 @@
-import authConnect from './authConnect.js'
+import authConnect from './authConnect.js';
 
 export async function verifyGoogleToken(req, res, next){
   const token = req.headers.authorization;
@@ -12,6 +12,5 @@ export async function verifyGoogleToken(req, res, next){
   if (!decodedToken) return;
   req.decoded = decodedToken;
 
-  next()
-
+  next();
 }
